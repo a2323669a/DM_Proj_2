@@ -1,3 +1,7 @@
+import os
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 from keras.layers.recurrent import GRU, LSTM
 from keras.layers.wrappers import TimeDistributed
 from keras.models import Sequential
@@ -49,7 +53,6 @@ model.compile(loss="mse", optimizer='adam')
 encoder = Model(inputs = model.input, outputs = model.get_layer(name='encode').output)
 
 gene = MGene(batch_size=32)
-save_call = SaveCall(filepath="./ckpt/{epoch}-{batch}-{loss:.6f}.ckpt", period=8000, mode=SaveCall.train_mode, max_one=False)
+save_call = SaveCall(filepath="./ckpt/{epoch}-{batch}-{loss:.6f}.ckpt", period=1500, mode=SaveCall.train_mode, max_one=False)
 iepoch = save_call.load(model)
-model.fit_generator(gene, epochs=20, initial_epoch=iepoch, shuffle=False, callbacks=[save_call])
-
+model.fit_generator(gene, epochs=20, initial_epoch=iepoch, shuffle=False, callbacks=[save_call], verbose=0)
